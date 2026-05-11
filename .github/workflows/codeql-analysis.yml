@@ -1,6 +1,4 @@
 - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
       with:
-        # Qui specifichi il percorso della tua query personalizzata
-        # Se la query è nel tuo repo, usa il percorso relativo
-        queries: ./query/taint_tracking.ql
+            queries: ./query/taint_tracking.ql
