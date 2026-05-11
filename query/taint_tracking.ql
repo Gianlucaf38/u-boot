@@ -1,7 +1,12 @@
 /**
+ * @name Network data flows to memcpy size
+ * @description Tracciamento del flusso dai dati di rete alla dimensione di memcpy per trovare buffer overflow.
  * @kind path-problem
+ * @id cpp/uboot-network-taint-tracking
+ * @problem.severity warning
+ * @precision high
+ * @tags security
  */
-
 import cpp
 import semmle.code.cpp.dataflow.TaintTracking
 
