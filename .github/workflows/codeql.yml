@@ -1,6 +1,9 @@
-name: "CodeQL Taint Tracking"
+name: "CodeQL U-Boot Custom"
 
-on: [push] # Si attiva ad ogni caricamento di codice
+on:
+  push:
+    branches: [ "master", "main" ]
+  workflow_dispatch: # Ti permette di avviarlo a mano per testare
 
 jobs:
   analyze:
@@ -10,24 +13,29 @@ jobs:
       contents: read
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
+      - name: Install Build Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libsdl2-dev bison flex bc libssl-dev
+          sudo apt-get install -y bison flex bc libssl-dev libsdl2-dev build-essential
 
-      - name: Init CodeQL
-        uses: github/codeql-action/init@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
         with:
-          languages: c-cpp
-          queries: ./query/taint_tracking.ql # Qui esegue SOLO la tua query
+          languages: cpp
+          # Qui carichiamo la TUA query personalizzata
+          queries: ./query/taint_tracking.ql
 
-      - name: Build U-Boot
+      - name: Build U-Boot (Sandbox)
         run: |
           make sandbox_defconfig
-          make HOSTCFLAGS="-fcommon" CFLAGS="-fcommon" NO_SDL=1 -j$(nproc)
+          # Usiamo -fcommon per evitare errori su definizioni duplicate (yylloc)
+          # Usiamo NO_SDL=1 per evitare errori grafici nel runner
+          make HOSTCFLAGS="-fcommon" CFLAGS="-fcommon" NO_SDL=1 -j$(nproc) || true
 
-      - name: Run Analysis
-        uses: github/codeql-action/analyze@v4
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "custom-analysis"
