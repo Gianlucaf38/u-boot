@@ -106,5 +106,4 @@ jobs:
       with:
         languages: ${{ matrix.language }}
         build-mode: ${{ matrix.build-mode }}
-        # AGGIUNGI QUESTA RIGA QUI SOTTO:
         queries: ./query/taint_tracking.ql
